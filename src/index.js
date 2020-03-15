@@ -3,11 +3,22 @@ import ReactDOM from 'react-dom';
 import './index.css';
 // import Card from './Card';
 // import CardList from './CardList';
+// import {robots} from './robots'
+//robots export with no "default" so should add {} here
 import App from './containers/App'
 import * as serviceWorker from './serviceWorker';
 import 'tachyons';
-// import {robots} from './robots'
-//robots export with no "default" so should add {} here
+
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
+import { searchRobots, requestRobots } from './reducers';
+
+import { createLogger } from 'redux-logger';
+
+import thunkMiddleware from 'redux-thunk';
+
+
+
 
 // ReactDOM.render(
 // 	<div>
@@ -26,7 +37,21 @@ import 'tachyons';
 // //左边robots为 CardList.js里公式的input变量，右边的robots是源文件的数据，即上面import的内容。
 
 
+const logger = createLogger();
+
+// 融合两个reducer
+const rootReducer = combineReducers({ searchRobots, requestRobots });
+
+// STORE: A BIG OBJECT THAT DESCRIBE THE STATE OF APP
+const store = createStore(rootReducer, applyMiddleware(logger, thunkMiddleware));
+
+
+
 ReactDOM.render(
-	<App />, document.getElementById('root'));
+	<Provider store={store}>
+		<App />
+	</Provider>, document.getElementById('root'));
 //create main JS
 serviceWorker.unregister();
+
+
